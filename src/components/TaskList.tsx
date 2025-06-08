@@ -99,32 +99,32 @@ export const TaskList: React.FC<TaskListProps> = ({
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-4 gap-4 mt-6">
-          <div className="bg-gray-50 rounded-lg p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="bg-gray-50 rounded-lg p-4 min-w-0 break-words">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-gray-500" />
               <span className="text-sm text-gray-500">Total</span>
             </div>
             <p className="text-2xl font-semibold text-gray-900 mt-1">{stats.total}</p>
           </div>
-          
-          <div className="bg-green-50 rounded-lg p-4">
+
+          <div className="bg-green-50 rounded-lg p-4 min-w-0 break-words">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span className="text-sm text-green-600">Completed</span>
             </div>
             <p className="text-2xl font-semibold text-green-700 mt-1">{stats.completed}</p>
           </div>
-          
-          <div className="bg-blue-50 rounded-lg p-4">
+
+          <div className="bg-blue-50 rounded-lg p-4 min-w-0 break-words">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-500" />
               <span className="text-sm text-blue-600">In Progress</span>
             </div>
             <p className="text-2xl font-semibold text-blue-700 mt-1">{stats.inProgress}</p>
           </div>
-          
-          <div className="bg-red-50 rounded-lg p-4">
+
+          <div className="bg-red-50 rounded-lg p-4 min-w-0 break-words">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-red-500" />
               <span className="text-sm text-red-600">Overdue</span>

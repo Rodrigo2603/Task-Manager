@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, FolderOpen, Search, Filter, ChevronDown, ChevronRight, BarChart3 } from 'lucide-react';
+import { Plus, FolderOpen, Search, Filter, ChevronDown, ChevronRight, BarChart3, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Project, TaskFilters } from '../types';
 
 interface SidebarProps {
@@ -38,6 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [selectedColor, setSelectedColor] = useState(projectColors[0]);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleAddProject = () => {
     if (newProjectName.trim()) {
@@ -49,133 +50,153 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-screen">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-semibold text-gray-900">Task Manager</h1>
-        <p className="text-sm text-gray-500 mt-1">Stay organized and productive</p>
+    <div className={`transition-all duration-300 bg-gray-50 border-r border-gray-200 h-screen flex flex-col ${isCollapsed ? 'w-16' : 'w-80'}`}>
+      {/* Toggle collapse */}
+      <div className="p-2 flex justify-end border-b border-gray-200">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="text-gray-600 hover:text-gray-900 p-1 rounded hover:bg-gray-200"
+        >
+          {isCollapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+        </button>
       </div>
+
+      {/* Header */}
+      {!isCollapsed && (
+        <div className="px-6 pb-4 border-b border-gray-200">
+          <h1 className="text-xl font-semibold text-gray-900">Task Manager</h1>
+          <p className="text-sm text-gray-500 mt-1">Stay organized and productive</p>
+        </div>
+      )}
 
       {/* Search */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search tasks..."
-            value={filters.search}
-            onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-          />
+      {!isCollapsed && (
+        <div className="p-4 border-b border-gray-200">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search tasks..."
+              value={filters.search}
+              onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Filters */}
-      <div className="px-4 py-2 border-b border-gray-200">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center justify-between w-full text-left text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
-          </div>
-          {showFilters ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
-        
-        {showFilters && (
-          <div className="mt-3 space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
-              <select
-                value={filters.status}
-                onChange={(e) => onFiltersChange({ ...filters, status: e.target.value as any })}
-                className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="all">All Status</option>
-                <option value="todo">To Do</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-              </select>
+      {!isCollapsed && (
+        <div className="px-4 py-2 border-b border-gray-200">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center justify-between w-full text-left text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              Filters
             </div>
-            
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
-              <select
-                value={filters.priority}
-                onChange={(e) => onFiltersChange({ ...filters, priority: e.target.value as any })}
-                className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="all">All Priorities</option>
-                <option value="urgent">Urgent</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </select>
+            {showFilters ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+
+          {showFilters && (
+            <div className="mt-3 space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                <select
+                  value={filters.status}
+                  onChange={(e) => onFiltersChange({ ...filters, status: e.target.value as any })}
+                  className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="all">All Status</option>
+                  <option value="todo">To Do</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
+                <select
+                  value={filters.priority}
+                  onChange={(e) => onFiltersChange({ ...filters, priority: e.target.value as any })}
+                  className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="all">All Priorities</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Analytics */}
-      <div className="px-4 py-2 border-b border-gray-200">
-        <button
-          onClick={() => setShowAnalytics(!showAnalytics)}
-          className="flex items-center justify-between w-full text-left text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Analytics
-          </div>
-          {showAnalytics ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
-        
-        {showAnalytics && (
-          <div className="mt-3 space-y-2">
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Total Tasks</span>
-              <span className="font-medium">{analytics.total}</span>
+      {!isCollapsed && (
+        <div className="px-4 py-2 border-b border-gray-200">
+          <button
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className="flex items-center justify-between w-full text-left text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
             </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Completed</span>
-              <span className="font-medium text-green-600">{analytics.completed}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">In Progress</span>
-              <span className="font-medium text-blue-600">{analytics.inProgress}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Overdue</span>
-              <span className="font-medium text-red-600">{analytics.overdue}</span>
-            </div>
-            <div className="mt-2 pt-2 border-t border-gray-200">
+            {showAnalytics ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+
+          {showAnalytics && (
+            <div className="mt-3 space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Completion Rate</span>
-                <span className="font-medium">{analytics.completionRate}%</span>
+                <span className="text-gray-500">Total Tasks</span>
+                <span className="font-medium">{analytics.total}</span>
               </div>
-              <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
-                <div
-                  className="bg-green-500 h-1.5 rounded-full transition-all duration-300"
-                  style={{ width: `${analytics.completionRate}%` }}
-                ></div>
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">Completed</span>
+                <span className="font-medium text-green-600">{analytics.completed}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">In Progress</span>
+                <span className="font-medium text-blue-600">{analytics.inProgress}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-gray-500">Overdue</span>
+                <span className="font-medium text-red-600">{analytics.overdue}</span>
+              </div>
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-500">Completion Rate</span>
+                  <span className="font-medium">{analytics.completionRate}%</span>
+                </div>
+                <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                  <div
+                    className="bg-green-500 h-1.5 rounded-full transition-all duration-300"
+                    style={{ width: `${analytics.completionRate}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Projects */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-medium text-gray-900">Projects</h2>
-            <button
-              onClick={() => setIsAddingProject(true)}
-              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
+          {!isCollapsed && (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-medium text-gray-900">Projects</h2>
+              <button
+                onClick={() => setIsAddingProject(true)}
+                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          )}
 
           {/* All Tasks */}
           <button
@@ -187,10 +208,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <FolderOpen className="h-4 w-4" />
-            <span className="text-sm font-medium">All Tasks</span>
-            <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-              {projects.reduce((sum, p) => sum + p.taskCount, 0)}
-            </span>
+            {!isCollapsed && (
+              <>
+                <span className="text-sm font-medium">All Tasks</span>
+                <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                  {projects.reduce((sum, p) => sum + p.taskCount, 0)}
+                </span>
+              </>
+            )}
           </button>
 
           {/* Project List */}
@@ -204,31 +229,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: project.color }}
-                ></div>
-                <span className="text-sm font-medium flex-1 truncate">{project.name}</span>
-                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                  {project.taskCount}
-                </span>
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
+                {!isCollapsed && (
+                  <>
+                    <span className="text-sm font-medium flex-1 truncate">{project.name}</span>
+                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{project.taskCount}</span>
+                  </>
+                )}
               </button>
 
-              {/* Botão de excluir */}
-              <div className="px-3 pb-2 hidden group-hover:block">
-                {project.id !== 'default' && (
-                <button
-                  onClick={() => deleteProject(project.id)}
-                  className="text-xs text-red-600 hover:underline"
-                >
-                  Excluir Projeto
-                </button>)}
-              </div>
+              {!isCollapsed && project.id !== 'default' && (
+                <div className="px-3 pb-2 hidden group-hover:block">
+                  <button
+                    onClick={() => deleteProject(project.id)}
+                    className="text-xs text-red-600 hover:underline"
+                  >
+                    Excluir Projeto
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 
           {/* Add Project Form */}
-          {isAddingProject && (
+          {!isCollapsed && isAddingProject && (
             <div className="mt-4 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
               <input
                 type="text"
@@ -243,9 +267,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      selectedColor === color ? 'border-gray-400' : 'border-gray-200'
-                    }`}
+                    className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-gray-400' : 'border-gray-200'}`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
